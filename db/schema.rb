@@ -23,6 +23,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_232448) do
     t.boolean "is_won"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["race_id", "twitter_id"], name: "index_participants_on_race_id_and_twitter_id", unique: true
     t.index ["race_id"], name: "index_participants_on_race_id"
   end
 

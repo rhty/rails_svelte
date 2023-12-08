@@ -9,5 +9,7 @@ class CreateParticipants < ActiveRecord::Migration[7.1]
 
       t.timestamps
     end
+
+    add_index :participants, [:race_id, :twitter_id], unique: true
   end
 end
