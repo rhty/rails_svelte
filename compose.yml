@@ -1,0 +1,29 @@
+version: '3'
+services:
+  db:
+    image: postgres:16.1-alpine
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ./storage/postgres:/var/lib/postgres/data
+    container_name: rs_postgres
+  app:
+    build: .
+    env_file: .env
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_HOST: db
+      RAILS_ENV: development
+    volumes:
+      - .:/rails
+    ports:
+      - 3000:3000
+    depends_on:
+      - db
+    container_name: rs_app
+    stdin_open: true
+    tty: true

@@ -17,13 +17,18 @@ ENV RAILS_ENV="production" \
 # Throw-away build stage to reduce size of final image
 FROM base as build
 
-# Install packages needed to build gems
+# Install packages needed to build gems and Node.js
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y build-essential git libpq-dev pkg-config
+    apt-get install --no-install-recommends -y curl build-essential git libpq-dev pkg-config  npm && \
+    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g yarn
 
-# Install application gems
-COPY Gemfile Gemfile.lock ./
-RUN bundle install && \
+# Copy Gemfile and package.json
+COPY Gemfile Gemfile.lock package.json yarn.lock ./
+
+# Install Gems and Node packages
+RUN bundle install && yarn install && \
     rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
 
 # Copy application code
