@@ -15,16 +15,18 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_232448) do
   enable_extension "pgcrypto"
   enable_extension "plpgsql"
 
-  create_table "participants", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+  create_table "predictions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "twitter_id", null: false
     t.string "twitter_account"
     t.uuid "race_id", null: false
     t.jsonb "prediction", null: false
     t.boolean "is_won"
+    t.integer "order"
+    t.boolean "is_management", default: false, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["race_id", "twitter_id"], name: "index_participants_on_race_id_and_twitter_id", unique: true
-    t.index ["race_id"], name: "index_participants_on_race_id"
+    t.index ["race_id", "twitter_id"], name: "index_predictions_on_race_id_and_twitter_id", unique: true
+    t.index ["race_id"], name: "index_predictions_on_race_id"
   end
 
   create_table "race_results", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -55,7 +57,7 @@ ActiveRecord::Schema[7.1].define(version: 2023_12_08_232448) do
     t.datetime "updated_at", null: false
   end
 
-  add_foreign_key "participants", "races"
+  add_foreign_key "predictions", "races"
   add_foreign_key "race_results", "races"
   add_foreign_key "races", "restrictions"
 end

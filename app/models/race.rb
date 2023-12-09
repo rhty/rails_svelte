@@ -19,7 +19,7 @@
 class Race < ApplicationRecord
   belongs_to :restriction
   has_one :race_result, dependent: :destroy
-  has_many :participants, dependent: :destroy
+  has_many :predictions, dependent: :destroy
 
   enum status: {
     not_started: 0,
