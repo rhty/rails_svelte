@@ -3,9 +3,6 @@
 ARG RUBY_VERSION=3.2.2
 FROM registry.docker.com/library/ruby:$RUBY_VERSION-slim
 
-# Rails app lives here
-WORKDIR /rails
-
 # Set production environment
 ENV RAILS_ENV="production" \
     BUNDLE_DEPLOYMENT="1" \
@@ -20,6 +17,9 @@ RUN apt-get update -qq && \
     apt-get install -y nodejs && \
     npm install -g yarn
 
+# Rails app lives here
+WORKDIR /rails
+
 # Copy Gemfile and package.json
 COPY Gemfile Gemfile.lock package.json yarn.lock ./
 
@@ -30,8 +30,9 @@ RUN bundle install && yarn install && \
 # Copy application code
 COPY . .
 
-# Precompiling assets for production without requiring secret RAILS_MASTER_KEY
-RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile
+# Precompiling assets for production and building Vite
+RUN SECRET_KEY_BASE_DUMMY=1 ./bin/rails assets:precompile && \
+    yarn vite build
 
 # Run and own only the runtime files as a non-root user for security
 RUN useradd rails --create-home --shell /bin/bash && \
