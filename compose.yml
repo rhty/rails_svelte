@@ -8,7 +8,7 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
-      - ./storage/postgres:/var/lib/postgres/data
+      - ./storage/postgresql/data:/var/lib/postgresql/data
     container_name: rs_postgres
   app:
     build: .
@@ -25,5 +25,20 @@ services:
     depends_on:
       - db
     container_name: rs_app
+    stdin_open: true
+    tty: true
+  vite:
+    build: .
+    command: ["./bin/vite", "dev"]
+    env_file: .env
+    environment:
+      RAILS_ENV: development
+    volumes:
+      - .:/rails
+    ports:
+      - 3036:3036
+    depends_on:
+      - app
+    container_name: rs_vite
     stdin_open: true
     tty: true
